@@ -1,8 +1,11 @@
 package com.practica.ems.covid;
 
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import com.practica.excecption.EmsDuplicatePersonException;
 import com.practica.excecption.EmsPersonNotFoundException;
@@ -17,36 +20,27 @@ public class Poblacion {
 		this.lista = new LinkedList<Persona>();
 	}
 	
-	public LinkedList<Persona> getLista() {
+	public List<Persona> getLista() {
 		return lista;
 	}
 
-	public void setLista(LinkedList<Persona> lista) {
-		this.lista = lista;
+	public void setLista(Collection<Persona> lista) throws EmsDuplicatePersonException {
+		this.lista = new LinkedList<Persona>();
+		for (Iterator<Persona> it = lista.iterator(); it.hasNext();) {
+			addPersona(it.next());
+		}
 	}
 
 	public void addPersona (Persona persona) throws EmsDuplicatePersonException {
-		try {
-			findPersona(persona.getDocumento());
+		if (lista.contains(persona)) {
 			throw new EmsDuplicatePersonException();
-		} catch (EmsPersonNotFoundException e) {
-			lista.add(persona);
-		} 
+		}
+		lista.add(persona);
 	}
 	
 	public void delPersona(String documento) throws EmsPersonNotFoundException {
-		int pos=-1;
-		/**
-		 * Busca la persona por documento, en caso de encontrarla
-		 * devuelve la posición dentro de la lista, sino está lanza
-		 * una excepción
-		 */
-		try {
-			pos = findPersona(documento);
-		} catch (EmsPersonNotFoundException e) {
-			throw new EmsPersonNotFoundException();
-		}
-		lista.remove(pos);		
+		int pos = findPersona(documento);
+		lista.remove(pos);
 	}
 	
 	public int findPersona (String documento) throws EmsPersonNotFoundException {
@@ -54,50 +48,23 @@ public class Poblacion {
 		Iterator<Persona> it = lista.iterator();
 		while (it.hasNext() ) {
 			Persona persona = it.next();
-			cont++;
 			if(persona.getDocumento().equals(documento)) {
 				return cont;
 			}
+			cont++;
 		}		
 		throw new EmsPersonNotFoundException();
 	}
 	
-	public void printPoblacion() {   
-		 
-	    for(int i = 0; i < lista.size(); i++) {	    	
-	    	FechaHora fecha = lista.get(i).getFechaNacimiento();
-	        // Documento	    	
-	        System.out.printf("%d;%s;", i, lista.get(i).getDocumento());
-	        // nombre y apellidos	              
-	        System.out.printf("%s,%s;",lista.get(i).getApellidos(), lista.get(i).getNombre());	        
-	        // correo electrónico
-	        System.out.printf("%s;", lista.get(i).getEmail());
-	        // Códifo postal
-	        System.out.printf("%s,%s;", lista.get(i).getDireccion(), lista.get(i).getCp());	        
-	        // Fecha de nacimiento
-	        System.out.printf("%02d/%02d/%04d\n", fecha.getFecha().getDia(), 
-	         fecha.getFecha().getMes(), 
-	         fecha.getFecha().getAnio());	        
-	    }
+	public void printPoblacion() {
+		System.out.printf(toString());
 	}
 
 	@Override
 	public String toString() {
 		String cadena = "";
 		for(int i = 0; i < lista.size(); i++) {
-			FechaHora fecha = lista.get(i).getFechaNacimiento();
-	        // Documento	    	    	
-	        cadena+=String.format("%s;", lista.get(i).getDocumento());
-	        // nombre y apellidos	              
-	        cadena+=String.format("%s,%s;",lista.get(i).getApellidos(), lista.get(i).getNombre());	        
-	        // correo electrónico
-	        cadena+=String.format("%s;", lista.get(i).getEmail());
-	        // Direccion y código postal
-	        cadena+=String.format("%s,%s;", lista.get(i).getDireccion(), lista.get(i).getCp());	        
-	        // Fecha de nacimiento
-	        cadena+=String.format("%02d/%02d/%04d\n", fecha.getFecha().getDia(), 
-	        		fecha.getFecha().getMes(), 
-	        		fecha.getFecha().getAnio());
+			cadena += String.format("%s\n", lista.get(i).toString());	    		        
 		}
 		return cadena;
 	}

@@ -98,7 +98,7 @@ public class Test_1 {
 			contactosCovid.loadData(
 					"PERSONA;12345678J;Juan Manuel;Garitagoitia;juanmanuel.garitagoitia@ems.com;La calle de Juanma, 225;28005;13/01/1972\n",
 					false);
-			Assertions.assertEquals(contactosCovid.findPersona("12345678J"), 3);
+			Assertions.assertEquals(contactosCovid.findPersona("12345678J"), 2);
 		} catch (EmsInvalidTypeException | EmsInvalidNumberOfDataException | EmsDuplicatePersonException
 				| EmsDuplicateLocationException e) {
 			// TODO Auto-generated catch block
@@ -122,7 +122,7 @@ public class Test_1 {
 	@DisplayName("Busca una persona que existe")
 	@Test
 	void test_1_9() throws EmsPersonNotFoundException {
-		assertEquals(contactosCovid.findPersona("12121212R"), 1);
+		assertEquals(contactosCovid.findPersona("12121212R"), 0);
 
 	}
 

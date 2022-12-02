@@ -1,16 +1,30 @@
 package com.practica.genericas;
 
+import java.time.LocalDate;
+
+import com.practica.excecption.EmsInvalidNumberOfDataException;
+
 
 public class Persona {
+	
 	private String nombre, apellidos, documento, email, direccion, cp;
-	FechaHora fechaNacimiento;
+	private LocalDate fechaNacimiento;
 
-	public Persona() {
-
+	public Persona(String[] datos) throws EmsInvalidNumberOfDataException {
+		if (datos.length != Constantes.MAX_DATOS_PERSONA) {
+			throw new EmsInvalidNumberOfDataException("El número de datos para PERSONA es menor de 8");
+		}
+		
+		this.nombre = datos[2];
+		this.apellidos = datos[3];
+		this.documento = datos[1];
+		this.email = datos[4];
+		this.direccion = datos[5];
+		this.cp = datos[6];
+		this.fechaNacimiento = FechaHora.parsearFecha(datos[7]);
 	}
 
-	public Persona(String nombre, String apellidos, String documento, String email, String direccion,
-			FechaHora fechaNacimiento) {
+	public Persona(String nombre, String apellidos, String documento, String email, String direccion, String cp, LocalDate fechaNacimiento) {
 		super();
 		this.nombre = nombre;
 		this.apellidos = apellidos;
@@ -18,6 +32,7 @@ public class Persona {
 		this.email = email;
 		this.direccion = direccion;
 		this.fechaNacimiento = fechaNacimiento;
+		this.cp = cp;
 	}
 
 	public String getNombre() {
@@ -68,17 +83,17 @@ public class Persona {
 		this.cp = cp;
 	}
 
-	public FechaHora getFechaNacimiento() {
+	public LocalDate getFechaNacimiento() {
 		return fechaNacimiento;
 	}
 
-	public void setFechaNacimiento(FechaHora fechaNacimiento) {
+	public void setFechaNacimiento(LocalDate fechaNacimiento) {
 		this.fechaNacimiento = fechaNacimiento;
 	}
 
 	@Override
 	public String toString() {
-		FechaHora fecha = getFechaNacimiento();
+		
 		String cadena = "";
 		// Documento
 		cadena += String.format("%s;", getDocumento());
@@ -89,10 +104,21 @@ public class Persona {
         // Direccion y código postal
 		cadena += String.format("%s,%s;", getDireccion(), getCp());
         // Fecha de nacimiento
-		cadena+=String.format("%02d/%02d/%04d\n", fecha.getFecha().getDia(), 
-        		fecha.getFecha().getMes(), 
-        		fecha.getFecha().getAnio());
+		cadena+= FechaHora.formatFecha(getFechaNacimiento());
 
 		return cadena;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		
+		Persona other = (Persona) obj;
+		return this.documento.equals(other.documento);
 	}
 }
